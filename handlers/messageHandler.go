@@ -4,9 +4,8 @@ package handlers
 import (
 	"net"
 	"fmt"
-	"log" 
-	"bufio"
 	"github.com/knutekje/lloggo/connectionmanager"
+	"strings"
 )
 
 func HandleConnection(cm *connectionmanager.ConnectionManager, conn net.Conn) {
@@ -25,6 +24,10 @@ func HandleConnection(cm *connectionmanager.ConnectionManager, conn net.Conn) {
 		n, err := conn.Read(buffer)
 		if err != nil {
 			return
+		}
+		word := strings.TrimSpace(string(buffer[:n])) 
+		if word == "subscribe" {
+			fmt.Println("YO")
 		}
 		cm.Broadcast(buffer)
 		fmt.Printf("[%s]: %s\n", key, string(buffer[:n]))
