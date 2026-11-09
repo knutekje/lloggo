@@ -3,34 +3,32 @@ package handlers
 
 import (
 	"net"
+	"fmt"
 	"log" 
 	"bufio"
+	"github.com/knutekje/lloggo/connectionmanager"
 )
-func HandleMessage(conn net.Conn){
-	defer conn.Close()
-	reader := bufio.NewReader(conn)
-	bytes, err := reader.ReadBytes(10)
 
-	if err != nil {
-		log.Println("ERROR",err)
-		return
+func HandleConnection(cm *connectionmanager.ConnectionManager, conn net.Conn) {
+	key := cm.Add(conn)
+	fmt.Println(key)
+
+	defer func() {
+		conn.Close()
+		cm.Remove(key)
+		fmt.Printf("Connection removed: %s\n", key)
+	}()
+
+	buffer := make([]byte, 1024)
+
+	for {
+		n, err := conn.Read(buffer)
+		if err != nil {
+			return
+		}
+		cm.Broadcast(buffer)
+		fmt.Printf("[%s]: %s\n", key, string(buffer[:n]))
 	}
-
-
-	message := string(bytes)
-
-	_, err = conn.Write([]byte(message))
-	if err != nil {
-		log.Println("ERROR WRITING:", err)
-		return
-	}
-
-
-
-	log.Println(message)
-
-	log.Println(bytes)
-
 
 
 }

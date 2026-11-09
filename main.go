@@ -3,9 +3,11 @@ import (
 	"net"
 	"log"
 	"github.com/knutekje/lloggo/handlers"
+	"github.com/knutekje/lloggo/connectionmanager"
 )
 
 func main() {
+	cm := connectionmanager.NewConnectionManager()
 	listener, err := net.Listen("tcp", ":6020")
 	if err != nil {
 		log.Println("FAILED TO START", err)
@@ -17,7 +19,7 @@ func main() {
 			log.Println("NOPE", err)
 			continue
 		}
-		go handlers.HandleMessage(conn)
+		go handlers.HandleConnection(cm, conn)
 
 	}
 }
