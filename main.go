@@ -2,7 +2,7 @@ package main
 import (
 	"net"
 	"log"
-	"bufio"
+	"github.com/knutekje/lloggo/handlers"
 )
 
 func main() {
@@ -17,19 +17,8 @@ func main() {
 			log.Println("NOPE", err)
 			continue
 		}
-		go handleMessage(conn)
+		go handlers.HandleMessage(conn)
+
 	}
 }
 
-func handleMessage(conn net.Conn){
-	defer conn.Close()
-	reader := bufio.NewReader(conn)
-	message, err := reader.ReadString('\n')
-	if err != nil {
-		log.Println("ERROR",err)
-		return
-	}
-	log.Println(message)
-
-
-}
