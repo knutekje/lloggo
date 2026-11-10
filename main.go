@@ -12,7 +12,12 @@ func main() {
 	if err != nil {
 		log.Println("FAILED TO START", err)
 	}
-	defer listener.Close()
+	defer func() {
+		if err := listener.Close(); err != nil {
+			log.Println("failed to close connection")
+		}
+	}()
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

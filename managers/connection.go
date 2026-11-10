@@ -1,7 +1,9 @@
 package managers
+
 import (
 	"sync"
 	"net"
+	"log"
 )
 
 type ConnectionManager struct {
@@ -38,6 +40,10 @@ func (cm *ConnectionManager) Broadcast(message []byte) {
 	cm.mu.RLock()
 	defer cm.mu.RUnlock()
 	for _, conn := range cm.connections {
-		go conn.Write(message)
-	}
+		go func(msg []byte) {
+			if _, err := conn.Write(message); err != nil {
+				log.Println("Error when writing")
+			}
+	}(message)
+}
 }

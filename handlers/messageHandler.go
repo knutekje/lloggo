@@ -4,6 +4,7 @@ package handlers
 import (
 	"net"
 	"fmt"
+	"log"
 	"github.com/knutekje/lloggo/managers"
 	"strings"
 )
@@ -13,7 +14,9 @@ func HandleConnection(cm *managers.ConnectionManager, conn net.Conn) {
 	fmt.Println(key)
 
 	defer func() {
-		conn.Close()
+		if err := conn.Close(); err != nil {
+			log.Println("FAILED TO CLOSE")
+		}
 		cm.Remove(key)
 		fmt.Printf("Connection removed: %s\n", key)
 	}()
