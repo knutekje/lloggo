@@ -4,11 +4,11 @@ package handlers
 import (
 	"net"
 	"fmt"
-	"github.com/knutekje/lloggo/connectionmanager"
+	"github.com/knutekje/lloggo/managers"
 	"strings"
 )
 
-func HandleConnection(cm *connectionmanager.ConnectionManager, conn net.Conn) {
+func HandleConnection(cm *managers.ConnectionManager, conn net.Conn) {
 	key := cm.Add(conn)
 	fmt.Println(key)
 

@@ -3,11 +3,11 @@ import (
 	"net"
 	"log"
 	"github.com/knutekje/lloggo/handlers"
-	"github.com/knutekje/lloggo/connectionmanager"
+	"github.com/knutekje/lloggo/managers"
 )
 
 func main() {
-	cm := connectionmanager.NewConnectionManager()
+	cm := managers.NewConnectionManager()
 	listener, err := net.Listen("tcp", ":6020")
 	if err != nil {
 		log.Println("FAILED TO START", err)
