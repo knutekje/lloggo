@@ -10,8 +10,6 @@ type ConnectionManager struct {
 }
 
 
-
-
 func NewConnectionManager() *ConnectionManager {
 	return &ConnectionManager{
 		connections: make(map[string]net.Conn),

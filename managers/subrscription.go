@@ -1,15 +1,26 @@
 package managers
 
-import (
-	"net"
-)
-
-type SubscribeChannel struct {
-	offset int
-	channel string
+type Channel struct {
+	ID int
+	Message chan byte
 }
 
-type Subscription struct {
-	connection net.Conn	
-	channels map[string]SubscribeChannel
+type ChannelManager struct {
+	chans map[string]Channel
 }
+func NewChannelManager () *ChannelManager {
+	return &ChannelManager{
+		chans: make(map[string]Channel),
+	}
+}
+
+func (cm *ChannelManager) CreateChanell(id int) *Channel{
+	return &Channel{
+		ID: id,
+		Message: make(chan byte),
+	} 
+}
+
+
+
+
