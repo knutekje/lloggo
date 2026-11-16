@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	log.Println("Llloggo starting")
 	cm := managers.NewConnectionManager()
 	listener, err := net.Listen("tcp", ":6020")
 	if err != nil {

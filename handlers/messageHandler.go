@@ -5,8 +5,18 @@ import (
 	"net"
 	"fmt"
 	"github.com/knutekje/lloggo/managers"
-	"strings"
+	"encoding/binary"
+	"io"
 )
+
+
+const (
+	CmdSubscribe byte = 0x01	
+	CmdPublish byte = 0x02
+)
+
+
+
 
 func HandleConnection(cm *managers.ConnectionManager, conn net.Conn) {
 	key := cm.Add(conn)
@@ -18,19 +28,34 @@ func HandleConnection(cm *managers.ConnectionManager, conn net.Conn) {
 		fmt.Printf("Connection removed: %s\n", key)
 	}()
 
-	buffer := make([]byte, 1024)
+	lenBuf := make([]byte, 2)
 
 	for {
-		n, err := conn.Read(buffer)
-		if err != nil {
+		if _, err := io.ReadFull(conn, lenBuf); err != nil {
 			return
 		}
-		word := strings.TrimSpace(string(buffer[:n])) 
-		if word == "subscribe" {
-			fmt.Println("YO")
+		msgLen := binary.BigEndian.Uint16(lenBuf)
+		if msgLen == 0 {
+			continue
 		}
-		cm.Broadcast(buffer)
-		fmt.Printf("[%s]: %s\n", key, string(buffer[:n]))
+
+		payload := make([]byte, msgLen)
+		if _, err := io.ReadFull(conn, payload); err != nil {
+			return
+		}
+		sig := payload[0]
+		data := payload[1:]
+
+		switch sig {
+		case CmdSubscribe:
+
+			fmt.Printf("YO - [%s] subscribed to: %s\n", key, string(data))
+
+		case CmdPublish:
+
+			cm.Broadcast(data)
+			fmt.Printf("[%s] Channel %d: %s\n", key, sig, string(data))
+		}
 	}
 
 
